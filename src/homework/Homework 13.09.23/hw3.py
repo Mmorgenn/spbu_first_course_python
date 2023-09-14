@@ -3,7 +3,7 @@ import sys
 
 
 def start():
-    #try:
+    try:
         command = sys.argv[1]
         if command == "wc":
             wc(sys.argv[2], sys.argv[3])
@@ -13,8 +13,8 @@ def start():
             tail(sys.argv[2], sys.argv[3], sys.argv[4])
         else:
             print("Такой команды нет")
-    #except Exception:
-        #print("Ошибка в команде!")
+    except Exception:
+        print("Ошибка в команде!")
 
 
 def wc(arg, file_name):
