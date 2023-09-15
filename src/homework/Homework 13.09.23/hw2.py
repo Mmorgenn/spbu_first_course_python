@@ -35,26 +35,22 @@ def angle_vectors(vector_1, vector_2):
 
 
 def line_matrix_create(line, count_columns):
-    try:
         line_matrix = (input(f"Введите содержания {line + 1} строки через пробел, без запятых (Например: a1 a2 a3): "))
-        if len(line_matrix.split()) == count_columns:
+        if len(line_matrix.split()) == count_columns and all(a.isdigit() for a in line_matrix.split()):
             return [int(a) for a in line_matrix.split()]
         else:
             print("Эта строка не добавлена в матрицу")
             return line_matrix_create(line, count_columns)
-    except Exception:
-        print("Эта строка не добавлена в матрицу")
-        return line_matrix_create(line, count_columns)
 
 
 def matrix_create():
-    try:
-        count_lines = int(input("Введите количество строк в матрице: "))
-        count_columns = int(input("Введите количество cтолбцов в матрице: "))
-        return [line_matrix_create(line, count_columns) for line in range(count_lines)]
-    except Exception:
-        print("Ошибка! Попробуй еще раз")
-        return matrix_create()
+        count_lines = (input("Введите количество строк в матрице: "))
+        count_columns = (input("Введите количество cтолбцов в матрице: "))
+        if count_lines.isdigit() and count_columns.isdigit():
+            return [line_matrix_create(line, int(count_columns)) for line in range(int(count_lines))]
+        else:
+            print("Ошибка! Попробуй еще раз")
+            return matrix_create()
 
 
 def matrix_addition(matrix_1, matrix_2):
