@@ -6,11 +6,9 @@ def calculating(x):
 
 def start():
     while True:
-        try:
-            x = int(input("Вычисление x^4 + x^3 + x^2 + x + 1 \n Введите значение x: "))
-            print(f"\n Вычисляю: {x}^4 + {x}^3 + {x}^2 + {x} + 1 = {calculating(x)} \n")
-        except Exception:
-            print("Ошибка! Попробуй еще раз! \n")
+        x = str(input("Вычисление x^4 + x^3 + x^2 + x + 1 \n Введите значение x: "))
+        if x.isdigit():
+            print(f"\n Вычисляю: {x}^4 + {x}^3 + {x}^2 + {x} + 1 = {calculating(int(x))} \n")
 
 
 if __name__ == "__main__":
