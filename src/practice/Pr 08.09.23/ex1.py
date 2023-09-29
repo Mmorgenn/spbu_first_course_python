@@ -1,6 +1,7 @@
 def result(a, b):
     eq = 1
-    if ((a < 0) + (b < 0)) == 1: eq = -1
+    if ((a < 0) + (b < 0)) == 1:
+        eq = -1
     a = abs(a)
     b = abs(b)
     res = 0
