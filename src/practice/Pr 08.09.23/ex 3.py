@@ -1,10 +1,11 @@
 def prime(a):
     mas_prime = []
-    for i1 in range(1, a+1):
-        for i2 in range(2, int(i1**0.5)+1):
-            if i1!=i2 and i1%i2==0:
+    for i1 in range(1, a + 1):
+        for i2 in range(2, int(i1**0.5) + 1):
+            if i1 != i2 and i1 % i2 == 0:
                 break
-        else: mas_prime.append(i1)
+        else:
+            mas_prime.append(i1)
     return mas_prime
 
 
