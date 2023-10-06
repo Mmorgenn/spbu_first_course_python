@@ -32,16 +32,15 @@ def push(stack: Stack, value):
 
 
 def pop(stack: Stack):
-    empty_stack = empty(stack)
-    if not empty_stack:
+    if not empty(stack):
         stack.head = stack.head.next
         stack.size -= 1
-    return not empty_stack
+        return True
+    return False
 
 
-def stack_test():
-    stack = Stack(0, None)
-    return push(stack, "123")
+def stack_new():
+    return Stack(0, None)
 
 
 def stack_output(stack):
@@ -49,7 +48,8 @@ def stack_output(stack):
 
 
 def start():
-    stack = stack_test()
+    stack = stack_new()
+    push(stack, "123")
     stack_output(stack)
     push(stack, "567")
     stack_output(stack)
