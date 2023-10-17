@@ -1,12 +1,10 @@
 def curry_explicit(function, arity):
     if not callable(function):
-        print(f"{function} is not function! Returned None")
-        return None
-    elif not type(arity) == int or arity < 0:
-        print("Arity should be int > 0! Returned None")
-        return None
-    elif arity == 0:
-        return function()
+        raise ValueError(f"{function} must be callable")
+    if type(arity) != int or arity < 0:
+        raise ValueError("Arity must be int => 0")
+    if arity == 0:
+        return function
 
     def function_on(arguments):
         if arity == len(arguments):
@@ -22,17 +20,14 @@ def curry_explicit(function, arity):
 
 def uncurry_explicit(function, arity):
     if not callable(function):
-        print(f"{function} is not function! Returned None")
-        return None
-    if not type(arity) == int or arity < 0:
-        print("Arity should be int > 0! Returned None")
-        return None
+        raise ValueError(f"{function} must be callable")
+    if type(arity) != int or arity < 0:
+        raise ValueError("Arity must be int => 0")
 
     def uncurry(*arguments):
         if len(arguments) != arity:
-            print("Arity != the number of arguments! Returned None")
-            return None
-        elif arity == 0:
+            raise ValueError("Arity != the number of arguments! Returned None")
+        if arity == 0:
             return function()
         function_result = function(arguments[0])
         for i in range(1, arity):
