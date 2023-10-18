@@ -2,7 +2,7 @@ def curry_explicit(function, arity):
     if not callable(function):
         raise ValueError(f"{function} must be callable")
     if type(arity) != int or arity < 0:
-        raise ValueError("Arity must be int => 0")
+        raise ValueError("Arity must be int >= 0")
     if arity == 0:
         return function
 
@@ -22,7 +22,7 @@ def uncurry_explicit(function, arity):
     if not callable(function):
         raise ValueError(f"{function} must be callable")
     if type(arity) != int or arity < 0:
-        raise ValueError("Arity must be int => 0")
+        raise ValueError("Arity must be int >=  0")
 
     def uncurry(*arguments):
         if len(arguments) != arity:
