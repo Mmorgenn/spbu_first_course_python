@@ -13,5 +13,8 @@ jobs:
           cache: "pip"
       - name: "installation"
         run: pip install black
+             pip install pytest
       - name: "black"
         run: black . --check --diff --color
+      - name: "pytest"
+        run: python -m pytest tests
