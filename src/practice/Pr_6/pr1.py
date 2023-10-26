@@ -24,16 +24,12 @@ def check_numbers(nums):
     if len(nums) != 3:
         raise TypeError("The numbers must be 3")
     for num in nums:
-        num_check = num
-        if num[0] == "-":
-            num_check = num[1:]
-        if num_check.count(".") == 1 and all(
-            [i.isdigit() for i in num_check.split(".")]
-        ):
-            continue
-        if num_check.isdigit():
-            continue
-        raise SyntaxError("Each element must be float")
+        try:
+            float(num)
+        except ValueError:
+            raise ValueError("Each element must be float")
+        if num.count("inf") > 0:
+            raise ValueError("Each element must be float")
     return [float(num) for num in nums]
 
 
@@ -44,8 +40,10 @@ def start():
     except TypeError:
         print("Чисел должно было быть ровно 3")
         return False
-    except SyntaxError:
-        print("Не все эллементы которые вы ввели являются числами")
+    except ValueError:
+        print(
+            "Не все эллементы которые вы ввели являются стандартными числами (Пример: +2.0 -3 0.5)\nБесконечность не будет учтена!"
+        )
         return False
     try:
         answer = (", ").join(str(num) for num in choose_solution(*nums))
