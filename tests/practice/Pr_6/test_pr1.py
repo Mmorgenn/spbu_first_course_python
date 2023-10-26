@@ -22,12 +22,6 @@ def test_check_numbers_three_correct_numbers(nums, expected):
     assert function == expected
 
 
-@pytest.mark.parametrize("nums", (([]), (["1", "2.0"]), ["what", "1", "10", "12.0."]))
-def test_check_numbers_incorrect_count_numbers(nums):
-    with pytest.raises(TypeError):
-        check_numbers(nums)
-
-
 @pytest.mark.parametrize(
     "nums",
     (
@@ -36,6 +30,9 @@ def test_check_numbers_incorrect_count_numbers(nums):
         (["inf", "2", "0.0"]),
         (["text", "for", "test"]),
         (["++2.0", "1.0", "12"]),
+        ([]),
+        (["1", "2.0"]),
+        (["what", "1", "10", "12.0."]),
     ),
 )
 def test_check_numbers_incorrect_elements(nums):
@@ -46,9 +43,9 @@ def test_check_numbers_incorrect_elements(nums):
 @pytest.mark.parametrize(
     "num_1,num_2,num_3,expected",
     (
-        (1.0, 17.0, -18.0, [-18.0, 1.0]),
-        (5.0, 7.0, 2.0, [-1.0, -0.4]),
-        (1.0, 4.0, 4.0, [-2.0]),
+        (1.0, 17.0, -18.0, {-18.0, 1.0}),
+        (5.0, 7.0, 2.0, {-1.0, -0.4}),
+        (1.0, 4.0, 4.0, {-2.0}),
     ),
 )
 def test_chose_solution_quadratic_equation(num_1, num_2, num_3, expected):
@@ -59,9 +56,9 @@ def test_chose_solution_quadratic_equation(num_1, num_2, num_3, expected):
 @pytest.mark.parametrize(
     "num_1,num_2,num_3,expected",
     (
-        (0.0, 1.0, 2.0, [-2.0]),
-        (0.0, -10.0, 5.0, [0.5]),
-        (0.0, 25.0, -10.0, [0.4]),
+        (0.0, 1.0, 2.0, -2.0),
+        (0.0, -10.0, 5.0, 0.5),
+        (0.0, 25.0, -10.0, 0.4),
     ),
 )
 def test_chose_solution_linear_equation(num_1, num_2, num_3, expected):
@@ -76,7 +73,7 @@ def test_chose_solution_no_options(num_1, num_2, num_3):
 
 
 @pytest.mark.parametrize(
-    "k,b,expected", ((1.0, 2.0, [-2.0]), (-10.0, 5.0, [0.5]), (25.0, -10.0, [0.4]))
+    "k,b,expected", ((1.0, 2.0, -2.0), (-10.0, 5.0, 0.5), (25.0, -10.0, 0.4))
 )
 def test_linear_equation_solve(k, b, expected):
     function = linear_equation_solve(k, b)
@@ -86,9 +83,9 @@ def test_linear_equation_solve(k, b, expected):
 @pytest.mark.parametrize(
     "a,b,c,expected",
     (
-        (1.0, 17.0, -18.0, [-18.0, 1.0]),
-        (5.0, 7.0, 2.0, [-1.0, -0.4]),
-        (1.0, 4.0, 4.0, [-2.0]),
+        (1.0, 17.0, -18.0, {-18.0, 1.0}),
+        (5.0, 7.0, 2.0, {-1.0, -0.4}),
+        (1.0, 4.0, 4.0, {-2.0}),
     ),
 )
 def test_quadratic_equation_solve(a, b, c, expected):
@@ -110,10 +107,19 @@ def test_quadratic_discriminant_less_zero(a, b, c):
         ("0 1 2", "Решениe: -2.0\n"),
         ("1 17 -18", "Решениe: -18.0, 1.0\n"),
         ("1 2 3", "Уравнение не имеет корней\n"),
-        ("1", "Чисел должно было быть ровно 3\n"),
+        (
+            "1",
+            "Произошла ошибка! Это могло произойти по нескольким причинам:\n"
+            "1)Вы ввели не 3 эллемента\n"
+            "2)Не все эллементы которые вы ввели являются стандартными числами (Пример: +2.0 -3 0.5)\n"
+            "3)Бесконечность не будет учтена!\n",
+        ),
         (
             "inf 2.0 3",
-            "Не все эллементы которые вы ввели являются стандартными числами (Пример: +2.0 -3 0.5)\nБесконечность не будет учтена!\n",
+            "Произошла ошибка! Это могло произойти по нескольким причинам:\n"
+            "1)Вы ввели не 3 эллемента\n"
+            "2)Не все эллементы которые вы ввели являются стандартными числами (Пример: +2.0 -3 0.5)\n"
+            "3)Бесконечность не будет учтена!\n",
         ),
         (
             "0 0 0",
