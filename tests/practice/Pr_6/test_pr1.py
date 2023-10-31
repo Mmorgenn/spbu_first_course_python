@@ -2,8 +2,8 @@ import pytest
 from io import StringIO
 from src.practice.Pr_6.pr1 import (
     start,
-    check_numbers,
-    choose_solution,
+    parsing_numbers,
+    get_solution,
     linear_equation_solve,
     quadratic_equation_solve,
 )
@@ -17,8 +17,8 @@ from src.practice.Pr_6.pr1 import (
         ([".5", "2.36", "-3"], [0.5, 2.36, -3.0]),
     ),
 )
-def test_check_numbers_three_correct_numbers(nums, expected):
-    function = check_numbers(nums)
+def test_parsing_numbers_three_correct_numbers(nums, expected):
+    function = parsing_numbers(nums)
     assert function == expected
 
 
@@ -35,45 +35,45 @@ def test_check_numbers_three_correct_numbers(nums, expected):
         (["what", "1", "10", "12.0."]),
     ),
 )
-def test_check_numbers_incorrect_elements(nums):
+def test_parsing_numbers_incorrect_elements(nums):
     with pytest.raises(ValueError):
-        check_numbers(nums)
+        parsing_numbers(nums)
 
 
 @pytest.mark.parametrize(
     "num_1,num_2,num_3,expected",
     (
-        (1.0, 17.0, -18.0, {-18.0, 1.0}),
-        (5.0, 7.0, 2.0, {-1.0, -0.4}),
-        (1.0, 4.0, 4.0, {-2.0}),
+        (1.0, 17.0, -18.0, (1.0, -18.0)),
+        (5.0, 7.0, 2.0, (-0.4, -1.0)),
+        (1.0, 4.0, 4.0, (-2.0,)),
     ),
 )
-def test_chose_solution_quadratic_equation(num_1, num_2, num_3, expected):
-    function = choose_solution(num_1, num_2, num_3)
+def test_get_solution_quadratic_equation(num_1, num_2, num_3, expected):
+    function = get_solution(num_1, num_2, num_3)
     assert function == expected
 
 
 @pytest.mark.parametrize(
     "num_1,num_2,num_3,expected",
     (
-        (0.0, 1.0, 2.0, -2.0),
-        (0.0, -10.0, 5.0, 0.5),
-        (0.0, 25.0, -10.0, 0.4),
+        (0.0, 1.0, 2.0, (-2.0,)),
+        (0.0, -10.0, 5.0, (0.5,)),
+        (0.0, 25.0, -10.0, (0.4,)),
     ),
 )
-def test_chose_solution_linear_equation(num_1, num_2, num_3, expected):
-    function = choose_solution(num_1, num_2, num_3)
+def test_get_solution_linear_equation(num_1, num_2, num_3, expected):
+    function = get_solution(num_1, num_2, num_3)
     assert function == expected
 
 
 @pytest.mark.parametrize("num_1,num_2,num_3", ((0.0, 0.0, 0.0), (0.0, 0.0, 12.0)))
-def test_chose_solution_no_options(num_1, num_2, num_3):
+def test_get_solution_no_options(num_1, num_2, num_3):
     with pytest.raises(ValueError):
-        choose_solution(num_1, num_2, num_3)
+        get_solution(num_1, num_2, num_3)
 
 
 @pytest.mark.parametrize(
-    "k,b,expected", ((1.0, 2.0, -2.0), (-10.0, 5.0, 0.5), (25.0, -10.0, 0.4))
+    "k,b,expected", ((1.0, 2.0, (-2.0,)), (-10.0, 5.0, (0.5,)), (25.0, -10.0, (0.4,)))
 )
 def test_linear_equation_solve(k, b, expected):
     function = linear_equation_solve(k, b)
@@ -83,9 +83,9 @@ def test_linear_equation_solve(k, b, expected):
 @pytest.mark.parametrize(
     "a,b,c,expected",
     (
-        (1.0, 17.0, -18.0, {-18.0, 1.0}),
-        (5.0, 7.0, 2.0, {-1.0, -0.4}),
-        (1.0, 4.0, 4.0, {-2.0}),
+        (1.0, 17.0, -18.0, (1.0, -18.0)),
+        (5.0, 7.0, 2.0, (-0.4, -1.0)),
+        (1.0, 4.0, 4.0, (-2.0,)),
     ),
 )
 def test_quadratic_equation_solve(a, b, c, expected):
@@ -105,21 +105,19 @@ def test_quadratic_discriminant_less_zero(a, b, c):
     "user_input,output",
     (
         ("0 1 2", "Решениe: -2.0\n"),
-        ("1 17 -18", "Решениe: -18.0, 1.0\n"),
+        ("1 17 -18", "Решениe: 1.0, -18.0\n"),
         ("1 2 3", "Уравнение не имеет корней\n"),
         (
             "1",
-            "Произошла ошибка! Это могло произойти по нескольким причинам:\n"
-            "1)Вы ввели не 3 эллемента\n"
-            "2)Не все эллементы которые вы ввели являются стандартными числами (Пример: +2.0 -3 0.5)\n"
-            "3)Бесконечность не будет учтена!\n",
+            "Произошла ошибка! Причина: The numbers must be 3\n",
+        ),
+        (
+            "i u t",
+            "Произошла ошибка! Причина: Each element must be float\n",
         ),
         (
             "inf 2.0 3",
-            "Произошла ошибка! Это могло произойти по нескольким причинам:\n"
-            "1)Вы ввели не 3 эллемента\n"
-            "2)Не все эллементы которые вы ввели являются стандартными числами (Пример: +2.0 -3 0.5)\n"
-            "3)Бесконечность не будет учтена!\n",
+            "Произошла ошибка! Причина: Element must not be inf\n",
         ),
         (
             "0 0 0",
