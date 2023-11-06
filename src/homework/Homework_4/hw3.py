@@ -1,17 +1,18 @@
+from __future__ import annotations
 from dataclasses import dataclass
 
 
 @dataclass
 class Node:
-    value: None
-    next: None
+    value: any
+    next: Node | None
 
 
 @dataclass
 class Queue:
     size: int
     head: Node | None
-    tail: None
+    tail: Node | None
 
 
 def create():
