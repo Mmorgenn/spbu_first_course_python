@@ -1,10 +1,14 @@
 from __future__ import annotations
 from dataclasses import dataclass
+from typing import TypeVar
+
+
+Value = TypeVar("Value")
 
 
 @dataclass
 class Node:
-    value: any
+    value: Value
     next: Node | None
 
 
