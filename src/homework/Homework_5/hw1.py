@@ -8,7 +8,10 @@ def get_encoded_representation(symbol_ord):
     if symbol_ord <= 65535:
         encode = encode.rjust(16, "0")
         return "{} {}".format(encode[:8], encode[8:16])
-    encode = encode.rjust(32, "0")
+    encode = symbol_ord - 65536
+    height = bin(encode // 1024 + 55296)[2:]
+    low = bin(encode % 1024 + 56320)[2:]
+    encode = height + low
     return "{} {} {} {}".format(encode[:8], encode[8:16], encode[16:24], encode[24:32])
 
 
