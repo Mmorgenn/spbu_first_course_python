@@ -1,38 +1,42 @@
-from re import search
-from string import ascii_lowercase
+from string import ascii_lowercase, digits
 
 
-def encode_dna(dna_line):
-    new_dna_line = dna_line
-    for i in range(len(dna_line) - 1):
-        e_1, e_2 = dna_line[i], dna_line[i + 1]
-        if e_1 != e_2:
-            new_dna_line = new_dna_line.replace(e_1 + e_2, f"{e_1} {e_2}", 1)
-    return ("").join(i[0] + str(len(i)) for i in new_dna_line.split())
+def encode_dna(dna):
+    chars = list(
+        map(
+            lambda i: dna[i] if i == 0 or dna[i] == dna[i - 1] else " " + dna[i],
+            (i for i in range(len(dna))),
+        )
+    )
+    chars_filtered = ("").join(chars).split()
+    result = list(map(lambda x: x[0] + str(len(x)), chars_filtered))
+    return ("").join(result)
 
 
 def check_encoded_line(dna_line):
-    return dna_line.isascii() and dna_line.islower() and dna_line.isalpha()
+    return all(i in ascii_lowercase for i in set(dna_line))
 
 
 def decode_dna(dna_line):
-    pattern = search("\D\d+", dna_line)
-    if pattern is None:
-        return dna_line
-    pattern = pattern.group()
-    if not pattern[0] in ascii_lowercase:
-        raise ValueError("Extraneous characters detected!")
-    new_dna_line = dna_line.replace(pattern, pattern[0] * int(pattern[1:]), 1)
-    return decode_dna(new_dna_line)
+    chars = list(filter(lambda x: x.isalpha(), dna_line))
+    count = dna_line.translate(str.maketrans(ascii_lowercase, " " * 26)).split()
+    return ("").join(list(map(lambda x: x[0] * int(x[1]), list(zip(chars, count)))))
 
 
 def check_decoded_line(dna_line):
-    first_element_check = dna_line[0].isdigit()
-    return (
-        search("\D{2}", dna_line) is None
-        and not first_element_check
-        and dna_line[-1] not in ascii_lowercase
-    )
+    if dna_line[0].isdigit():
+        raise ValueError("Строка не может начинаться с цифры")
+    if dna_line[-1] in ascii_lowercase:
+        raise ValueError("Строка должна оканчиваться цифрой")
+    if any(
+        (dna_line[i] in ascii_lowercase and dna_line[i + 1] in ascii_lowercase)
+        for i in range(len(dna_line) - 1)
+    ):
+        raise ValueError(
+            "Строка должна состоять из пар строчная латинская буква + число"
+        )
+    if any(i not in (ascii_lowercase + digits) for i in set(dna_line)):
+        raise ValueError("Строка должно состоять из цифр и строчных латинских букв")
 
 
 def start_encode():
@@ -56,19 +60,12 @@ def start_decode():
     if input_dna_line == "":
         print("Строка пустая!")
         return
-    if check_decoded_line(input_dna_line):
-        try:
-            print("Результат:\t{}".format(decode_dna(input_dna_line)))
-        except ValueError:
-            print(
-                "Произошла ошибка! Причина: В линии ДНК используютуся лишние элементы!\n"
-                "В закодированной строке могут быть только цифры и строчные буквы латинского алфавита"
-            )
-    else:
-        print(
-            "Произошла ошибка! Причина: Нарушена структура закодированной линии ДНК\n"
-            "Строка должна состоять из пар: Строчная латинская буква + Число"
-        )
+    try:
+        check_decoded_line(input_dna_line)
+    except ValueError as e:
+        print(f"Ошибка! Причина: {e}")
+        return
+    print("Результат:\t{}".format(decode_dna(input_dna_line)))
 
 
 def main():

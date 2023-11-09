@@ -58,26 +58,13 @@ def test_decode_dna(dna_line, expected):
     assert function == expected
 
 
-@pytest.mark.parametrize("dna_line", ("a1b5ф1", "ф2", "b3h5-9", "b1 3 8n6", "(3a5)7"))
-def test_incorrect_decode_dna(dna_line):
-    with pytest.raises(ValueError):
-        decode_dna(dna_line)
-
-
 @pytest.mark.parametrize(
-    "dna_line,expected",
-    (
-        ("a3b6c9a1", True),
-        ("b37b1b4", True),
-        ("a12", True),
-        ("aa1b6v3", False),
-        ("12n6b8", False),
-        ("b12n", False),
-    ),
+    "dna_line",
+    ("a3bc6c9a1", "b37b1-4", "aa1b6v3", "12n6b8", "b12n"),
 )
-def test_check_decode_line(dna_line, expected):
-    function = check_decoded_line(dna_line)
-    assert function == expected
+def test_check_decode_line(dna_line):
+    with pytest.raises(ValueError):
+        check_decoded_line(dna_line)
 
 
 @pytest.mark.parametrize(
@@ -108,13 +95,13 @@ def test_start_encode(user_input, output, monkeypatch):
         ("a3b6a1c12", "Результат:\taaabbbbbbacccccccccccc\n"),
         (
             "A1B6B8N0V5",
-            "Произошла ошибка! Причина: В линии ДНК используютуся лишние элементы!\n"
-            "В закодированной строке могут быть только цифры и строчные буквы латинского алфавита\n",
+            "Ошибка! Причина: Строка должно состоять из цифр и строчных латинских букв\n",
         ),
+        ("12f7b45m13", "Ошибка! Причина: Строка не может начинаться с цифры\n"),
+        ("a123b70m", "Ошибка! Причина: Строка должна оканчиваться цифрой\n"),
         (
-            "12f7b45m13",
-            "Произошла ошибка! Причина: Нарушена структура закодированной линии ДНК\n"
-            "Строка должна состоять из пар: Строчная латинская буква + Число\n",
+            "vv45z1r34y6v3n1",
+            "Ошибка! Причина: Строка должна состоять из пар строчная латинская буква + число\n",
         ),
     ),
 )
