@@ -37,7 +37,7 @@ def test_spy_decorator_single_use(function, parameters):
     "function,parameter_1,parameter_2,parameter_3",
     ((foo, 30, "hello", 5), (get_summary, [1], [2, 3, 4], [12, 0, 0, 10])),
 )
-def test_spy_decorator_single_use(function, parameter_1, parameter_2, parameter_3):
+def test_spy_decorator_multiple_uses(function, parameter_1, parameter_2, parameter_3):
     time_now = []
     parameters = (parameter_1, parameter_2, parameter_3)
     for parameter in parameters:
