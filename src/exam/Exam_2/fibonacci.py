@@ -15,9 +15,13 @@ def get_fibonacci_num(num: int) -> int:
 def main():
     user_input = input("Введите цеолое положительное число меньшее 91: ")
     if is_correct_input(user_input):
-        print(f"Число Фибоначчи под номером {user_input}: {get_fibonacci_num(int(user_input))}")
+        print(
+            f"Число Фибоначчи под номером {user_input}: {get_fibonacci_num(int(user_input))}"
+        )
     else:
-        print("Вы не корректно ввели число! Ваше число должно быть целым, положительным, меньше 91")
+        print(
+            "Вы не корректно ввели число! Ваше число должно быть целым, положительным, меньше 91"
+        )
 
 
 if __name__ == "__main__":
