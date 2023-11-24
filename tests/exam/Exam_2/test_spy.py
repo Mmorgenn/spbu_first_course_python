@@ -8,8 +8,18 @@ def foo(num):
 
 
 @spy
+def boo(num):
+    print(num)
+
+
+@spy
 def get_summary(nums: list) -> int:
     return sum(nums)
+
+
+@spy
+def get_maximum(nums: list) -> int:
+    return max(nums)
 
 
 @spy
@@ -23,7 +33,7 @@ def printer(list_for_print: list):
 
 @pytest.mark.parametrize(
     "function,parameters",
-    ((foo, 3), (get_summary, [1])),
+    ((boo, 3), (get_maximum, [1, 2, 4])),
 )
 def test_spy_decorator_single_use(function, parameters):
     time_now = ctime(time())
