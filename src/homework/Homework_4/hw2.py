@@ -29,9 +29,9 @@ def get_binary_fraction(num, mantissa_bits):
     for i in range(mantissa_bits):
         num *= 2
         bin_num.append(str(num // 1)[0])
-        if num % 1 == 0:
-            return bin_num
         num = num % 1
+        if num == 0:
+            return bin_num
     return bin_num
 
 
