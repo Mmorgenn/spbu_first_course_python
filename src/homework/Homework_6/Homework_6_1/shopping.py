@@ -80,8 +80,7 @@ def file_writing_logs(results: list, file_name_output: str):
 
 def file_writing_balance(balance: list, file_name_output: str):
     with open(file_name_output, "w") as file_output:
-        for line in balance:
-            size, count = line
+        for size, count in balance:
             file_output.write(f"{size} {count}\n")
 
 

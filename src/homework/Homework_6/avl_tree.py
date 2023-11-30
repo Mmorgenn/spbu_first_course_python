@@ -17,6 +17,7 @@ class TreeNode(Generic[Value]):
 @dataclass
 class TreeMap(Generic[Value]):
     root: Optional["TreeNode[Value]"] = None
+    size: int = 0
 
 
 def _get_height(node: TreeNode[Value]) -> int:
@@ -54,7 +55,7 @@ def _update_balance(node: TreeNode[Value]) -> TreeNode[Value]:
 
 
 def _is_empty(tree_map: TreeMap[Value]) -> bool:
-    return tree_map.root is None
+    return tree_map.size == 0
 
 
 def create_tree_map() -> TreeMap[Value]:
@@ -73,9 +74,13 @@ def delete_tree_map(tree_map: TreeMap[Value]):
     if not _is_empty(tree_map):
         _delete_tree_map(tree_map.root)
     tree_map.root = None
+    tree_map.size = 0
 
 
 def put(tree_map: TreeMap[Value], key: Key, value: Value):
+    if not has_key(tree_map, key):
+        tree_map.size += 1
+
     def _put(node: TreeNode[Value], key: Key, value: Value):
         if node is None:
             return TreeNode(key=key, value=value)
@@ -119,6 +124,7 @@ def remove(tree_map: TreeMap[Value], key: Key) -> Value:
         return _update_balance(node), value_result
 
     tree_map.root, result = _remove(tree_map.root, key)
+    tree_map.size -= 1
     return result
 
 
@@ -290,3 +296,9 @@ def _double_right_rotate(node: TreeNode[Value]) -> TreeNode[Value]:
 def _double_left_rotate(node: TreeNode[Value]) -> TreeNode[Value]:
     node.left = _single_right_rotate(node.left)
     return _single_left_rotate(node)
+
+
+test = create_tree_map()
+for key, value in ():
+    put(test, key, value)
+print(traverse(test, "preorder"))
