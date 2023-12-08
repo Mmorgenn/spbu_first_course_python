@@ -2,12 +2,17 @@ from src.practice.Pr_9.fsm import *
 
 
 def create_first_fs_machine():
-    return create_fs_machine(["a", "b"],
-                             {0: [("a", 1), ("b", 0)],
-                              1: [("a", 1), ("b", 2)],
-                              2: [("a", 1), ("b", 3)],
-                              3: [("a", 1), ("b", 0)]},
-                             0, [3])
+    return create_fs_machine(
+        ["a", "b"],
+        {
+            0: [("a", 1), ("b", 0)],
+            1: [("a", 1), ("b", 2)],
+            2: [("a", 1), ("b", 3)],
+            3: [("a", 1), ("b", 0)],
+        },
+        0,
+        [3],
+    )
 
 
 def main():

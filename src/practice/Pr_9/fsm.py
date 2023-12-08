@@ -9,7 +9,7 @@ class State:
 @dataclass
 class FSMachine:
     alphabet: list[str]
-    states: dict[int: State]
+    states: dict[int:State]
     current_state: int
     end_states: list[int]
 
@@ -18,8 +18,12 @@ def create_state(transfers: list[tuple[str, int]]):
     return State({symbol: state for (symbol, state) in transfers})
 
 
-
-def create_fs_machine(alphabet: list[str], states: dict[int: list[tuple[str, int]]], zero_state: int, end_state: list[int]) -> FSMachine:
+def create_fs_machine(
+    alphabet: list[str],
+    states: dict[int : list[tuple[str, int]]],
+    zero_state: int,
+    end_state: list[int],
+) -> FSMachine:
     for position in states.keys():
         states[position] = create_state(states.get(position))
     return FSMachine(alphabet, states, zero_state, end_state)
@@ -45,11 +49,13 @@ def validate_string(fsm: FSMachine, string: str) -> bool:
     fsm.current_state = zero_state
     return validity
 
-second_dummy_fsm = create_fs_machine(["b", "o"],
-                                     {0: [("b", 2), ("o", 1)],
-                                      1: [("b", 2), ("o", 0)],
-                                      2: [("b", 2), ("o", 2)]},
-                                     0, [2])
+
+second_dummy_fsm = create_fs_machine(
+    ["b", "o"],
+    {0: [("b", 2), ("o", 1)], 1: [("b", 2), ("o", 0)], 2: [("b", 2), ("o", 2)]},
+    0,
+    [2],
+)
 
 
 print(validate_string(second_dummy_fsm, "b"))
