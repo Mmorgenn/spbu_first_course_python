@@ -48,14 +48,3 @@ def validate_string(fsm: FSMachine, string: str) -> bool:
     validity = fsm.current_state in fsm.end_states
     fsm.current_state = zero_state
     return validity
-
-
-second_dummy_fsm = create_fs_machine(
-    ["b", "o"],
-    {0: [("b", 2), ("o", 1)], 1: [("b", 2), ("o", 0)], 2: [("b", 2), ("o", 2)]},
-    0,
-    [2],
-)
-
-
-print(validate_string(second_dummy_fsm, "b"))
