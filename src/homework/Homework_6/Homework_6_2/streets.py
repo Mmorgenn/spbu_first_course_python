@@ -1,5 +1,5 @@
 from os.path import exists
-from src.homeworks.Homework_6.avl_tree import *
+from src.homework.Homework_6.avl_tree import *
 
 
 def check_files(file_input, file_output):
