@@ -11,14 +11,13 @@ from src.homework.Homework_6.avl_tree import (
     get_minimum_key,
     get_higher_bound,
     get_lower_bound,
-    traverse,
 )
 
 
-def create_dummy_tree(key_value_list):
+def create_dummy_tree(tree_elements):
     dummy_tree = create_tree_map()
-    for key_value in key_value_list:
-        put(dummy_tree, *key_value)
+    for key, value in tree_elements:
+        put(dummy_tree, key, value)
     return dummy_tree
 
 
@@ -35,24 +34,30 @@ def create_dummy_tree(key_value_list):
                     left=TreeNode(
                         key=2,
                         value="text",
-                        left=TreeNode(key=1, value=2, left=None, right=None, height=0),
+                        left=TreeNode(
+                            key=1, value=2, left=None, right=None, height=0, size=1
+                        ),
                         right=TreeNode(
-                            key=3, value=[0], left=None, right=None, height=0
+                            key=3, value=[0], left=None, right=None, height=0, size=1
                         ),
                         height=1,
+                        size=3,
                     ),
                     right=TreeNode(
                         key=6,
                         value=-10,
                         left=TreeNode(
-                            key=5, value=1.0, left=None, right=None, height=0
+                            key=5, value=1.0, left=None, right=None, height=0, size=1
                         ),
-                        right=TreeNode(key=7, value=7, left=None, right=None, height=0),
+                        right=TreeNode(
+                            key=7, value=7, left=None, right=None, height=0, size=1
+                        ),
                         height=1,
+                        size=3,
                     ),
                     height=2,
-                ),
-                size=7,
+                    size=7,
+                )
             ),
         ),
         (
@@ -65,32 +70,37 @@ def create_dummy_tree(key_value_list):
                     left=TreeNode(
                         key=2,
                         value="text",
-                        left=TreeNode(key=1, value=2, left=None, right=None, height=0),
+                        left=TreeNode(
+                            key=1, value=2, left=None, right=None, height=0, size=1
+                        ),
                         right=TreeNode(
-                            key=3, value=[0], left=None, right=None, height=0
+                            key=3, value=[0], left=None, right=None, height=0, size=1
                         ),
                         height=1,
+                        size=3,
                     ),
                     right=TreeNode(
                         key=6,
                         value=-10,
                         left=TreeNode(
-                            key=5, value=1.0, left=None, right=None, height=0
+                            key=5, value=1.0, left=None, right=None, height=0, size=1
                         ),
                         right=TreeNode(
                             key=7,
                             value="hey",
                             left=None,
                             right=TreeNode(
-                                key=8, value=8, left=None, right=None, height=0
+                                key=8, value=8, left=None, right=None, height=0, size=1
                             ),
                             height=1,
+                            size=2,
                         ),
                         height=2,
+                        size=4,
                     ),
                     height=3,
-                ),
-                size=8,
+                    size=8,
+                )
             ),
         ),
         (
@@ -112,23 +122,31 @@ def create_dummy_tree(key_value_list):
                     left=TreeNode(
                         key=2,
                         value="text",
-                        left=TreeNode(key=1, value=2, left=None, right=None, height=0),
+                        left=TreeNode(
+                            key=1, value=2, left=None, right=None, height=0, size=1
+                        ),
                         right=TreeNode(
-                            key=3, value=[0], left=None, right=None, height=0
+                            key=3, value=[0], left=None, right=None, height=0, size=1
                         ),
                         height=1,
+                        size=3,
                     ),
                     right=TreeNode(
                         key=6,
                         value=-10,
                         left=TreeNode(
-                            key=5, value=1.0, left=None, right=None, height=0
+                            key=5, value=1.0, left=None, right=None, height=0, size=1
                         ),
                         right=TreeNode(
                             key=8,
                             value=8,
                             left=TreeNode(
-                                key=7, value="hey", left=None, right=None, height=0
+                                key=7,
+                                value="hey",
+                                left=None,
+                                right=None,
+                                height=0,
+                                size=1,
                             ),
                             right=TreeNode(
                                 key=100,
@@ -136,14 +154,17 @@ def create_dummy_tree(key_value_list):
                                 left=None,
                                 right=None,
                                 height=0,
+                                size=1,
                             ),
                             height=1,
+                            size=3,
                         ),
                         height=2,
+                        size=5,
                     ),
                     height=3,
-                ),
-                size=9,
+                    size=9,
+                )
             ),
         ),
         (
@@ -166,11 +187,14 @@ def create_dummy_tree(key_value_list):
                     left=TreeNode(
                         key=2,
                         value="text",
-                        left=TreeNode(key=1, value=2, left=None, right=None, height=0),
+                        left=TreeNode(
+                            key=1, value=2, left=None, right=None, height=0, size=1
+                        ),
                         right=TreeNode(
-                            key=3, value=[0], left=None, right=None, height=0
+                            key=3, value=[0], left=None, right=None, height=0, size=1
                         ),
                         height=1,
+                        size=3,
                     ),
                     right=TreeNode(
                         key=8,
@@ -179,27 +203,45 @@ def create_dummy_tree(key_value_list):
                             key=6,
                             value=-10,
                             left=TreeNode(
-                                key=5, value=1.0, left=None, right=None, height=0
+                                key=5,
+                                value=1.0,
+                                left=None,
+                                right=None,
+                                height=0,
+                                size=1,
                             ),
                             right=TreeNode(
-                                key=7, value="hey", left=None, right=None, height=0
+                                key=7,
+                                value="hey",
+                                left=None,
+                                right=None,
+                                height=0,
+                                size=1,
                             ),
                             height=1,
+                            size=3,
                         ),
                         right=TreeNode(
                             key=100,
                             value=("test", 1),
                             left=TreeNode(
-                                key=77, value=77, left=None, right=None, height=0
+                                key=77,
+                                value=77,
+                                left=None,
+                                right=None,
+                                height=0,
+                                size=1,
                             ),
                             right=None,
                             height=1,
+                            size=2,
                         ),
                         height=2,
+                        size=6,
                     ),
                     height=3,
-                ),
-                size=10,
+                    size=10,
+                )
             ),
         ),
     ),
@@ -236,12 +278,13 @@ def test_put(tree_elements, element, expected):
                             key=2,
                             value=3,
                             left=TreeNode(
-                                key=1, value=2, left=None, right=None, height=0
+                                key=1, value=2, left=None, right=None, height=0, size=1
                             ),
                             right=TreeNode(
-                                key=3, value=4, left=None, right=None, height=0
+                                key=3, value=4, left=None, right=None, height=0, size=1
                             ),
                             height=1,
+                            size=3,
                         ),
                         right=TreeNode(
                             key=8,
@@ -250,25 +293,38 @@ def test_put(tree_elements, element, expected):
                                 key=7,
                                 value=8,
                                 left=TreeNode(
-                                    key=5, value=6, left=None, right=None, height=0
+                                    key=5,
+                                    value=6,
+                                    left=None,
+                                    right=None,
+                                    height=0,
+                                    size=1,
                                 ),
                                 right=None,
                                 height=1,
+                                size=2,
                             ),
                             right=TreeNode(
                                 key=9,
                                 value=10,
                                 left=None,
                                 right=TreeNode(
-                                    key=10, value=11, left=None, right=None, height=0
+                                    key=10,
+                                    value=11,
+                                    left=None,
+                                    right=None,
+                                    height=0,
+                                    size=1,
                                 ),
                                 height=1,
+                                size=2,
                             ),
                             height=2,
+                            size=5,
                         ),
                         height=3,
-                    ),
-                    size=9,
+                        size=9,
+                    )
                 ),
                 7,
             ),
@@ -296,12 +352,13 @@ def test_put(tree_elements, element, expected):
                             key=2,
                             value=3,
                             left=TreeNode(
-                                key=1, value=2, left=None, right=None, height=0
+                                key=1, value=2, left=None, right=None, height=0, size=1
                             ),
                             right=TreeNode(
-                                key=3, value=4, left=None, right=None, height=0
+                                key=3, value=4, left=None, right=None, height=0, size=1
                             ),
                             height=1,
+                            size=3,
                         ),
                         right=TreeNode(
                             key=8,
@@ -310,21 +367,33 @@ def test_put(tree_elements, element, expected):
                                 key=6,
                                 value=7,
                                 left=TreeNode(
-                                    key=5, value=6, left=None, right=None, height=0
+                                    key=5,
+                                    value=6,
+                                    left=None,
+                                    right=None,
+                                    height=0,
+                                    size=1,
                                 ),
                                 right=TreeNode(
-                                    key=7, value=8, left=None, right=None, height=0
+                                    key=7,
+                                    value=8,
+                                    left=None,
+                                    right=None,
+                                    height=0,
+                                    size=1,
                                 ),
                                 height=1,
+                                size=3,
                             ),
                             right=TreeNode(
-                                key=9, value=10, left=None, right=None, height=0
+                                key=9, value=10, left=None, right=None, height=0, size=1
                             ),
                             height=2,
+                            size=5,
                         ),
                         height=3,
-                    ),
-                    size=9,
+                        size=9,
+                    )
                 ),
                 11,
             ),
@@ -352,12 +421,13 @@ def test_put(tree_elements, element, expected):
                             key=2,
                             value=3,
                             left=TreeNode(
-                                key=1, value=2, left=None, right=None, height=0
+                                key=1, value=2, left=None, right=None, height=0, size=1
                             ),
                             right=TreeNode(
-                                key=3, value=4, left=None, right=None, height=0
+                                key=3, value=4, left=None, right=None, height=0, size=1
                             ),
                             height=1,
+                            size=3,
                         ),
                         right=TreeNode(
                             key=8,
@@ -366,21 +436,38 @@ def test_put(tree_elements, element, expected):
                                 key=6,
                                 value=7,
                                 left=TreeNode(
-                                    key=5, value=6, left=None, right=None, height=0
+                                    key=5,
+                                    value=6,
+                                    left=None,
+                                    right=None,
+                                    height=0,
+                                    size=1,
                                 ),
                                 right=TreeNode(
-                                    key=7, value=8, left=None, right=None, height=0
+                                    key=7,
+                                    value=8,
+                                    left=None,
+                                    right=None,
+                                    height=0,
+                                    size=1,
                                 ),
                                 height=1,
+                                size=3,
                             ),
                             right=TreeNode(
-                                key=10, value=11, left=None, right=None, height=0
+                                key=10,
+                                value=11,
+                                left=None,
+                                right=None,
+                                height=0,
+                                size=1,
                             ),
                             height=2,
+                            size=5,
                         ),
                         height=3,
-                    ),
-                    size=9,
+                        size=9,
+                    )
                 ),
                 10,
             ),
@@ -408,12 +495,13 @@ def test_put(tree_elements, element, expected):
                             key=2,
                             value=3,
                             left=TreeNode(
-                                key=1, value=2, left=None, right=None, height=0
+                                key=1, value=2, left=None, right=None, height=0, size=1
                             ),
                             right=TreeNode(
-                                key=3, value=4, left=None, right=None, height=0
+                                key=3, value=4, left=None, right=None, height=0, size=1
                             ),
                             height=1,
+                            size=3,
                         ),
                         right=TreeNode(
                             key=8,
@@ -423,24 +511,37 @@ def test_put(tree_elements, element, expected):
                                 value=7,
                                 left=None,
                                 right=TreeNode(
-                                    key=7, value=8, left=None, right=None, height=0
+                                    key=7,
+                                    value=8,
+                                    left=None,
+                                    right=None,
+                                    height=0,
+                                    size=1,
                                 ),
                                 height=1,
+                                size=2,
                             ),
                             right=TreeNode(
                                 key=9,
                                 value=10,
                                 left=None,
                                 right=TreeNode(
-                                    key=10, value=11, left=None, right=None, height=0
+                                    key=10,
+                                    value=11,
+                                    left=None,
+                                    right=None,
+                                    height=0,
+                                    size=1,
                                 ),
                                 height=1,
+                                size=2,
                             ),
                             height=2,
+                            size=5,
                         ),
                         height=3,
-                    ),
-                    size=9,
+                        size=9,
+                    )
                 ),
                 5,
             ),
@@ -450,7 +551,7 @@ def test_put(tree_elements, element, expected):
 def test_remove(tree_elements, key, expected):
     dummy_tree = create_dummy_tree(tree_elements)
     value = remove(dummy_tree, key)
-    assert dummy_tree, value == expected
+    assert dummy_tree == expected[0] and value == expected[1]
 
 
 @pytest.mark.parametrize(
@@ -606,12 +707,33 @@ def test_get_lower_bound(tree_elements, key, expected):
 @pytest.mark.parametrize(
     "tree_elements,key",
     (
+        ((), -10),
+        (((1, 1), (2, 2), (3, 3)), 4),
+        ((("TEST", 13), ("text", 24), ("abc", 0)), "test"),
+    ),
+)
+def test_error_get_value(tree_elements, key):
+    dummy_tree = create_dummy_tree(tree_elements)
+    with pytest.raises(ValueError):
+        get_value(dummy_tree, key)
+
+
+@pytest.mark.parametrize(
+    "tree_elements,key",
+    (
         (((1, 1), (2, 2), (4, 4)), 3),
         ((("hello", 1), ("world", 2), ("!", 77)), "HELLO"),
     ),
 )
-def test_error_in_remove(tree_elements, key):
+def test_error_remove(tree_elements, key):
     dummy_tree = create_dummy_tree(tree_elements)
+    with pytest.raises(ValueError):
+        remove(dummy_tree, key)
+
+
+@pytest.mark.parametrize("key", (-10, 4, "test"))
+def test_error_remove_in_empty_tree(key):
+    dummy_tree = create_tree_map()
     with pytest.raises(ValueError):
         remove(dummy_tree, key)
 
@@ -642,126 +764,13 @@ def test_error_get_lower_bound(tree_elements, key):
         get_lower_bound(dummy_tree, key)
 
 
-@pytest.mark.parametrize("key", (-10, 4, "test"))
-def test_remove_in_empty_tree(key):
-    dummy_tree = create_tree_map()
-    with pytest.raises(ValueError):
-        remove(dummy_tree, key)
-
-
-@pytest.mark.parametrize("key", (-10, 4, "test"))
-def test_get_value_in_empty_tree(key):
-    dummy_tree = create_tree_map()
-    with pytest.raises(ValueError):
-        get_value(dummy_tree, key)
-
-
-@pytest.mark.parametrize("key", (-10, 4, "test"))
-def test_get_maximum_in_empty_tree(key):
+def test_error_get_maximum():
     dummy_tree = create_tree_map()
     with pytest.raises(ValueError):
         get_maximum_key(dummy_tree)
 
 
-@pytest.mark.parametrize("key", (-10, 4, "test"))
-def test_get_minimum_in_empty_tree(key):
+def test_error_get_minimum():
     dummy_tree = create_tree_map()
     with pytest.raises(ValueError):
         get_minimum_key(dummy_tree)
-
-
-@pytest.mark.parametrize(
-    "keys,order,expected",
-    (
-        (
-            (
-                (1, 1),
-                (37, 37),
-                (10, 10),
-                (0, 0),
-                (15, 15),
-                (89, 89),
-                (25, 25),
-                (26, 26),
-            ),
-            "preorder",
-            [
-                (10, 10),
-                (1, 1),
-                (0, 0),
-                (37, 37),
-                (25, 25),
-                (15, 15),
-                (26, 26),
-                (89, 89),
-            ],
-        ),
-        (
-            (
-                (1, 1),
-                (37, 37),
-                (10, 10),
-                (0, 0),
-                (15, 15),
-                (89, 89),
-                (25, 25),
-                (26, 26),
-            ),
-            "inorder",
-            [
-                (0, 0),
-                (1, 1),
-                (10, 10),
-                (15, 15),
-                (25, 25),
-                (26, 26),
-                (37, 37),
-                (89, 89),
-            ],
-        ),
-        (
-            (
-                (1, 1),
-                (37, 37),
-                (10, 10),
-                (0, 0),
-                (15, 15),
-                (89, 89),
-                (25, 25),
-                (26, 26),
-            ),
-            "postorder",
-            [
-                (0, 0),
-                (1, 1),
-                (15, 15),
-                (26, 26),
-                (25, 25),
-                (89, 89),
-                (37, 37),
-                (10, 10),
-            ],
-        ),
-        ((), "postorder", []),
-        ((), "inorder", []),
-        ((), "preorder", []),
-    ),
-)
-def test_traverse(keys, order, expected):
-    dummy_tree = create_dummy_tree(keys)
-    function = traverse(dummy_tree, order)
-    assert function == expected
-
-
-@pytest.mark.parametrize(
-    "keys,order",
-    (
-        (((1, 1), (2, 2), (4, 57)), "failure"),
-        ((("1", 1), ("2", 2), ("4", 57)), "reorder"),
-        (((0, 0),), "78"),
-    ),
-)
-def test_error_in_traverse(keys, order):
-    dummy_tree = create_dummy_tree(keys)
-    with pytest.raises(ValueError):
-        traverse(dummy_tree, order)

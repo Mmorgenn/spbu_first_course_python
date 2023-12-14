@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from typing import Generic, Optional, TypeVar
 
+
 Value = TypeVar("Value")
 Key = TypeVar("Key")
 
@@ -12,12 +13,12 @@ class TreeNode(Generic[Value]):
     left: Optional["TreeNode[Value]"] = None
     right: Optional["TreeNode[Value]"] = None
     height: int = 0
+    size: int = 1
 
 
 @dataclass
 class TreeMap(Generic[Value]):
     root: Optional["TreeNode[Value]"] = None
-    size: int = 0
 
 
 def _get_height(node: TreeNode[Value]) -> int:
@@ -25,6 +26,13 @@ def _get_height(node: TreeNode[Value]) -> int:
         return -1
     else:
         return node.height
+
+
+def _get_size(node: TreeNode[Value]) -> int:
+    if node is None:
+        return 0
+    else:
+        return node.size
 
 
 def _get_balance_factor(node: TreeNode[Value]) -> int:
@@ -37,8 +45,13 @@ def _update_height(node: TreeNode[Value]):
     node.height = max(_get_height(node.left), _get_height(node.right)) + 1
 
 
+def _update_size(node: TreeNode[Value]):
+    node.size = _get_size(node.left) + _get_size(node.right) + 1
+
+
 def _update_balance(node: TreeNode[Value]) -> TreeNode[Value]:
     _update_height(node)
+    _update_size(node)
     balance_factor = _get_balance_factor(node)
 
     if balance_factor == 2:
@@ -55,7 +68,7 @@ def _update_balance(node: TreeNode[Value]) -> TreeNode[Value]:
 
 
 def _is_empty(tree_map: TreeMap[Value]) -> bool:
-    return tree_map.size == 0
+    return tree_map.root is None
 
 
 def create_tree_map() -> TreeMap[Value]:
@@ -74,13 +87,9 @@ def delete_tree_map(tree_map: TreeMap[Value]):
     if not _is_empty(tree_map):
         _delete_tree_map(tree_map.root)
     tree_map.root = None
-    tree_map.size = 0
 
 
 def put(tree_map: TreeMap[Value], key: Key, value: Value):
-    if not has_key(tree_map, key):
-        tree_map.size += 1
-
     def _put(node: TreeNode[Value], key: Key, value: Value):
         if node is None:
             return TreeNode(key=key, value=value)
@@ -124,7 +133,6 @@ def remove(tree_map: TreeMap[Value], key: Key) -> Value:
         return _update_balance(node), value_result
 
     tree_map.root, result = _remove(tree_map.root, key)
-    tree_map.size -= 1
     return result
 
 
@@ -275,7 +283,9 @@ def _single_right_rotate(node: TreeNode[Value]) -> TreeNode[Value]:
     node.right = new_node.left
     new_node.left = node
     _update_height(node)
+    _update_size(node)
     new_node.height = max(_get_height(new_node.right), _get_height(node)) + 1
+    new_node.size = _get_size(new_node.right) + _get_size(node) + 1
     return new_node
 
 
@@ -284,7 +294,9 @@ def _single_left_rotate(node: TreeNode[Value]) -> TreeNode[Value]:
     node.left = new_node.right
     new_node.right = node
     _update_height(node)
+    _update_size(node)
     new_node.height = max(_get_height(new_node.left), _get_height(node)) + 1
+    new_node.size = _get_size(new_node.left) + _get_size(node) + 1
     return new_node
 
 
@@ -296,9 +308,3 @@ def _double_right_rotate(node: TreeNode[Value]) -> TreeNode[Value]:
 def _double_left_rotate(node: TreeNode[Value]) -> TreeNode[Value]:
     node.left = _single_right_rotate(node.left)
     return _single_left_rotate(node)
-
-
-test = create_tree_map()
-for key, value in ():
-    put(test, key, value)
-print(traverse(test, "preorder"))
