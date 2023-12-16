@@ -191,6 +191,9 @@ from io import StringIO
             "................SUM\n"
             "....................eps\n",
         ),
+        ("( 12", "Error due to reason: ')' is missing\n"),
+        ("12 +", "Error due to reason: The element under index 2 is missing!\n"),
+        ("12 + test", "Error due to reason: Incorrect symbol: test. Must be digit\n"),
     ),
 )
 def test_main(user_input, expected, monkeypatch):

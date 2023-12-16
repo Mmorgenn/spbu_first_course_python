@@ -3,7 +3,11 @@ from src.practice.Pr_10.parser import *
 
 def main():
     user_input = input("Enter the line for analysis: ").split()
-    parser_node = parse(user_input)
+    try:
+        parser_node = parse(user_input)
+    except ValueError as e:
+        print(f"Error due to reason: {e}")
+        return
     pretty_print(parser_node)
 
 

@@ -48,24 +48,29 @@ def _prod(tokens: list[str], index: int):
 
 def _token(tokens: list[str], index: int):
     if index >= len(tokens):
-        raise ValueError("incorrect index")
+        raise ValueError(f"The element under index {index} is missing!")
     if tokens[index] == "(":
         start_node, start_index = _start(tokens, index + 1)
-        if tokens[start_index] == ")":
+        if start_index < len(tokens) and tokens[start_index] == ")":
             return (
                 ParserNode(
                     "TOKEN", [ParserNode("(", []), start_node, ParserNode(")", [])]
                 ),
                 start_index + 1,
             )
-    else:
+        raise ValueError("')' is missing")
+    elif tokens[index].isdigit():
         token_node = ParserNode(f"id({tokens[index]})", [])
         return ParserNode("TOKEN", [token_node]), index + 1
+    raise ValueError(f"Incorrect symbol: {tokens[index]}. Must be digit")
 
 
 def parse(tokens: list[str]) -> ParserNode[Value]:
     index = 0
-    return _start(tokens, index)[0]
+    result_tree, result_index = _start(tokens, index)
+    if result_index == len(tokens):
+        return result_tree
+    raise ValueError(f"The line is broken!")
 
 
 def pretty_print(tree: ParserNode[Value]):
