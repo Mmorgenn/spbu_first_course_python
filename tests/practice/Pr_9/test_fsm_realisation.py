@@ -1,34 +1,34 @@
 import pytest
 from io import StringIO
 from src.practice.Pr_9.fsm import create_fs_machine, validate_string
-from src.practice.Pr_9.main import main
+from src.practice.Pr_9.main import main, OUTPUT_STRING_ANY, OUTPUT_STRING_NONE
 
 
-OUTPUT_STRING_FIRST = "[✅] - The string is suitable for the first language!\n"
-OUTPUT_STRING_NONE = "[⛔] - The string is not suitable for any languages!\n"
+@pytest.fixture
+def create_first_dummy_fsm():
+    return create_fs_machine(
+        "first_dummy",
+        {
+            0: {"1": 1},
+            1: {"2": 2},
+            2: {"3": 3},
+            3: {"4": 4},
+            4: {"5": 5},
+            5: {"1": 1},
+        },
+        0,
+        [3, 5],
+    )
 
 
-first_dummy_fsm = create_fs_machine(
-    ["1", "2", "3", "4", "5"],
-    {
-        0: [("1", 1)],
-        1: [("2", 2)],
-        2: [("3", 3)],
-        3: [("4", 4)],
-        4: [("5", 5)],
-        5: [("1", 1)],
-    },
-    0,
-    [3, 5],
-)
-
-
-second_dummy_fsm = create_fs_machine(
-    ["b", "o"],
-    {0: [("b", 2), ("o", 1)], 1: [("b", 1), ("o", 0)], 2: [("b", 2), ("o", 2)]},
-    0,
-    [2],
-)
+@pytest.fixture
+def create_second_dummy_fsm():
+    return create_fs_machine(
+        "second_dummy",
+        {0: {"b": 2, "o": 1}, 1: {"b": 1, "o": 0}, 2: {"b": 2, "o": 2}},
+        0,
+        [2],
+    )
 
 
 @pytest.mark.parametrize(
@@ -46,8 +46,8 @@ second_dummy_fsm = create_fs_machine(
         ("12345\n", False),
     ),
 )
-def test_first_dummy_fsm(string, expected):
-    function = validate_string(first_dummy_fsm, string)
+def test_first_dummy_fsm(string, expected, create_first_dummy_fsm):
+    function = validate_string(create_first_dummy_fsm, string)
     assert function == expected
 
 
@@ -68,21 +68,31 @@ def test_first_dummy_fsm(string, expected):
         ("oooooooo", False),
     ),
 )
-def test_second_dummy_fsm(string, expected):
-    function = validate_string(second_dummy_fsm, string)
+def test_second_dummy_fsm(string, expected, create_second_dummy_fsm):
+    function = validate_string(create_second_dummy_fsm, string)
     assert function == expected
 
 
 @pytest.mark.parametrize(
     "string,expected",
     (
-        ("abb", OUTPUT_STRING_FIRST),
-        ("a", OUTPUT_STRING_NONE),
-        ("bb", OUTPUT_STRING_NONE),
-        ("ababababb", OUTPUT_STRING_FIRST),
-        ("bbabb", OUTPUT_STRING_FIRST),
-        ("abbabbabb", OUTPUT_STRING_FIRST),
-        ("SAMPLE_TEXT", OUTPUT_STRING_NONE),
+        ("abb", f"{OUTPUT_STRING_ANY} first_fs_machine\n"),
+        ("a", OUTPUT_STRING_NONE + "\n"),
+        ("bb", OUTPUT_STRING_NONE + "\n"),
+        ("ababababb", f"{OUTPUT_STRING_ANY} first_fs_machine\n"),
+        ("bbabb", f"{OUTPUT_STRING_ANY} first_fs_machine\n"),
+        ("abbabbabb", f"{OUTPUT_STRING_ANY} first_fs_machine\n"),
+        ("SAMPLE_TEXT", OUTPUT_STRING_NONE + "\n"),
+        ("123456", f"{OUTPUT_STRING_ANY} second_fs_machine\n"),
+        ("0.7788", f"{OUTPUT_STRING_ANY} second_fs_machine\n"),
+        ("12.45E+13", f"{OUTPUT_STRING_ANY} second_fs_machine\n"),
+        ("34E98", f"{OUTPUT_STRING_ANY} second_fs_machine\n"),
+        ("1E-78", f"{OUTPUT_STRING_ANY} second_fs_machine\n"),
+        ("56.78E7", f"{OUTPUT_STRING_ANY} second_fs_machine\n"),
+        ("1-E78", OUTPUT_STRING_NONE + "\n"),
+        ("12.E-12.0", OUTPUT_STRING_NONE + "\n"),
+        ("7-8", OUTPUT_STRING_NONE + "\n"),
+        ("E-42", OUTPUT_STRING_NONE + "\n"),
     ),
 )
 def test_first_fsm(string, expected, monkeypatch):
