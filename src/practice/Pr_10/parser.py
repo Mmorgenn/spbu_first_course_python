@@ -1,14 +1,14 @@
 from dataclasses import dataclass
-from typing import TypeVar, Generic
+from typing import TypeVar
 
 
 Value = TypeVar("Value")
 
 
 @dataclass
-class ParserNode(Generic[Value]):
+class ParserNode:
     value: Value
-    children: list["ParserNode[Value]"]
+    children: list["ParserNode"]
 
 
 def _start(tokens: list[str], index: int):
@@ -65,7 +65,7 @@ def _token(tokens: list[str], index: int):
     raise ValueError(f"Incorrect symbol: {tokens[index]}. Must be digit")
 
 
-def parse(tokens: list[str]) -> ParserNode[Value]:
+def parse(tokens: list[str]) -> ParserNode:
     index = 0
     result_tree, result_index = _start(tokens, index)
     if result_index == len(tokens):
@@ -73,7 +73,7 @@ def parse(tokens: list[str]) -> ParserNode[Value]:
     raise ValueError(f"The line is broken!")
 
 
-def pretty_print(tree: ParserNode[Value]):
+def pretty_print(tree: ParserNode):
     result = []
 
     def get_result(node, indent=0):
