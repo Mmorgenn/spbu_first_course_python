@@ -1,15 +1,16 @@
 import pytest
 from src.homework.Homework_6.avl_tree import (
-    TreeMap,
-    TreeNode,
+    is_empty,
     create_tree_map,
+    get_size,
+    get_balance_factor,
     put,
     remove,
     has_key,
     get_value,
     get_maximum_key,
     get_minimum_key,
-    get_higher_bound,
+    get_upper_bound,
     get_lower_bound,
 )
 
@@ -21,239 +22,70 @@ def create_dummy_tree(tree_elements):
     return dummy_tree
 
 
+def check_tree_balance(tree_map) -> bool:
+    if is_empty(tree_map):
+        return True
+
+    def _check_balance(node):
+        if not node:
+            return True
+        if abs(get_balance_factor(node)) > 1:
+            return False
+        if not _check_balance(node.left) or not _check_balance(node.right):
+            return False
+        return True
+
+    return _check_balance(tree_map.root)
+
+
 @pytest.mark.parametrize(
-    "tree_elements,element,expected",
+    "tree_elements,expected_size",
     (
-        (
-            ((1, 2), (2, "text"), (3, [0]), (4, True), (5, 1.0), (6, -10), (7, "hey")),
-            (7, 7),
-            TreeMap(
-                root=TreeNode(
-                    key=4,
-                    value=True,
-                    left=TreeNode(
-                        key=2,
-                        value="text",
-                        left=TreeNode(
-                            key=1, value=2, left=None, right=None, height=0, size=1
-                        ),
-                        right=TreeNode(
-                            key=3, value=[0], left=None, right=None, height=0, size=1
-                        ),
-                        height=1,
-                        size=3,
-                    ),
-                    right=TreeNode(
-                        key=6,
-                        value=-10,
-                        left=TreeNode(
-                            key=5, value=1.0, left=None, right=None, height=0, size=1
-                        ),
-                        right=TreeNode(
-                            key=7, value=7, left=None, right=None, height=0, size=1
-                        ),
-                        height=1,
-                        size=3,
-                    ),
-                    height=2,
-                    size=7,
-                )
-            ),
-        ),
-        (
-            ((1, 2), (2, "text"), (3, [0]), (4, True), (5, 1.0), (6, -10), (7, "hey")),
-            (8, 8),
-            TreeMap(
-                root=TreeNode(
-                    key=4,
-                    value=True,
-                    left=TreeNode(
-                        key=2,
-                        value="text",
-                        left=TreeNode(
-                            key=1, value=2, left=None, right=None, height=0, size=1
-                        ),
-                        right=TreeNode(
-                            key=3, value=[0], left=None, right=None, height=0, size=1
-                        ),
-                        height=1,
-                        size=3,
-                    ),
-                    right=TreeNode(
-                        key=6,
-                        value=-10,
-                        left=TreeNode(
-                            key=5, value=1.0, left=None, right=None, height=0, size=1
-                        ),
-                        right=TreeNode(
-                            key=7,
-                            value="hey",
-                            left=None,
-                            right=TreeNode(
-                                key=8, value=8, left=None, right=None, height=0, size=1
-                            ),
-                            height=1,
-                            size=2,
-                        ),
-                        height=2,
-                        size=4,
-                    ),
-                    height=3,
-                    size=8,
-                )
-            ),
-        ),
+        ((), 0),
+        (((1, 12), (13, 4), (15, 7), (15, 8), (1, 3)), 3),
         (
             (
-                (1, 2),
-                (2, "text"),
-                (3, [0]),
-                (4, True),
-                (5, 1.0),
-                (6, -10),
-                (7, "hey"),
-                (8, 8),
+                (1, "a"),
+                (10, "b"),
+                (13, 0),
+                (14, True),
+                (0, 0),
+                (9, 9),
+                (127, 128),
+                (37, "00:43 :)"),
             ),
-            (100, ("test", 1)),
-            TreeMap(
-                root=TreeNode(
-                    key=4,
-                    value=True,
-                    left=TreeNode(
-                        key=2,
-                        value="text",
-                        left=TreeNode(
-                            key=1, value=2, left=None, right=None, height=0, size=1
-                        ),
-                        right=TreeNode(
-                            key=3, value=[0], left=None, right=None, height=0, size=1
-                        ),
-                        height=1,
-                        size=3,
-                    ),
-                    right=TreeNode(
-                        key=6,
-                        value=-10,
-                        left=TreeNode(
-                            key=5, value=1.0, left=None, right=None, height=0, size=1
-                        ),
-                        right=TreeNode(
-                            key=8,
-                            value=8,
-                            left=TreeNode(
-                                key=7,
-                                value="hey",
-                                left=None,
-                                right=None,
-                                height=0,
-                                size=1,
-                            ),
-                            right=TreeNode(
-                                key=100,
-                                value=("test", 1),
-                                left=None,
-                                right=None,
-                                height=0,
-                                size=1,
-                            ),
-                            height=1,
-                            size=3,
-                        ),
-                        height=2,
-                        size=5,
-                    ),
-                    height=3,
-                    size=9,
-                )
-            ),
+            8,
         ),
+        (((1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6), (7, 7), (8, 8), (9, 9)), 9),
         (
             (
-                (1, 2),
-                (2, "text"),
-                (3, [0]),
-                (4, True),
-                (5, 1.0),
-                (6, -10),
-                (7, "hey"),
-                (8, 8),
-                (100, ("test", 1)),
+                (12, [0]),
+                (11, 6),
+                (10, "27.12.2023"),
+                (12, ""),
+                (3, 3),
+                (100, None),
+                (8, 18),
             ),
-            (77, 77),
-            TreeMap(
-                root=TreeNode(
-                    key=4,
-                    value=True,
-                    left=TreeNode(
-                        key=2,
-                        value="text",
-                        left=TreeNode(
-                            key=1, value=2, left=None, right=None, height=0, size=1
-                        ),
-                        right=TreeNode(
-                            key=3, value=[0], left=None, right=None, height=0, size=1
-                        ),
-                        height=1,
-                        size=3,
-                    ),
-                    right=TreeNode(
-                        key=8,
-                        value=8,
-                        left=TreeNode(
-                            key=6,
-                            value=-10,
-                            left=TreeNode(
-                                key=5,
-                                value=1.0,
-                                left=None,
-                                right=None,
-                                height=0,
-                                size=1,
-                            ),
-                            right=TreeNode(
-                                key=7,
-                                value="hey",
-                                left=None,
-                                right=None,
-                                height=0,
-                                size=1,
-                            ),
-                            height=1,
-                            size=3,
-                        ),
-                        right=TreeNode(
-                            key=100,
-                            value=("test", 1),
-                            left=TreeNode(
-                                key=77,
-                                value=77,
-                                left=None,
-                                right=None,
-                                height=0,
-                                size=1,
-                            ),
-                            right=None,
-                            height=1,
-                            size=2,
-                        ),
-                        height=2,
-                        size=6,
-                    ),
-                    height=3,
-                    size=10,
-                )
-            ),
+            6,
         ),
     ),
 )
-def test_put(tree_elements, element, expected):
+def test_put(tree_elements, expected_size):
     dummy_tree = create_dummy_tree(tree_elements)
-    put(dummy_tree, *element)
-    assert dummy_tree == expected
+    assert get_size(dummy_tree.root) == expected_size and check_tree_balance(dummy_tree)
+
+
+@pytest.mark.parametrize("keys_count", (1, 10, 25, 50, 100, 1000))
+def test_tree_balance(keys_count):
+    dummy_tree = create_tree_map()
+    for i in range(keys_count):
+        put(dummy_tree, i, i)
+        assert check_tree_balance(dummy_tree)
 
 
 @pytest.mark.parametrize(
-    "tree_elements,key,expected",
+    "tree_elements,key,expected_size,expected_value",
     (
         (
             (
@@ -268,66 +100,9 @@ def test_put(tree_elements, element, expected):
                 (9, 10),
                 (10, 11),
             ),
-            6,
-            (
-                TreeMap(
-                    root=TreeNode(
-                        key=4,
-                        value=5,
-                        left=TreeNode(
-                            key=2,
-                            value=3,
-                            left=TreeNode(
-                                key=1, value=2, left=None, right=None, height=0, size=1
-                            ),
-                            right=TreeNode(
-                                key=3, value=4, left=None, right=None, height=0, size=1
-                            ),
-                            height=1,
-                            size=3,
-                        ),
-                        right=TreeNode(
-                            key=8,
-                            value=9,
-                            left=TreeNode(
-                                key=7,
-                                value=8,
-                                left=TreeNode(
-                                    key=5,
-                                    value=6,
-                                    left=None,
-                                    right=None,
-                                    height=0,
-                                    size=1,
-                                ),
-                                right=None,
-                                height=1,
-                                size=2,
-                            ),
-                            right=TreeNode(
-                                key=9,
-                                value=10,
-                                left=None,
-                                right=TreeNode(
-                                    key=10,
-                                    value=11,
-                                    left=None,
-                                    right=None,
-                                    height=0,
-                                    size=1,
-                                ),
-                                height=1,
-                                size=2,
-                            ),
-                            height=2,
-                            size=5,
-                        ),
-                        height=3,
-                        size=9,
-                    )
-                ),
-                7,
-            ),
+            3,
+            9,
+            4,
         ),
         (
             (
@@ -343,134 +118,8 @@ def test_put(tree_elements, element, expected):
                 (10, 11),
             ),
             10,
-            (
-                TreeMap(
-                    root=TreeNode(
-                        key=4,
-                        value=5,
-                        left=TreeNode(
-                            key=2,
-                            value=3,
-                            left=TreeNode(
-                                key=1, value=2, left=None, right=None, height=0, size=1
-                            ),
-                            right=TreeNode(
-                                key=3, value=4, left=None, right=None, height=0, size=1
-                            ),
-                            height=1,
-                            size=3,
-                        ),
-                        right=TreeNode(
-                            key=8,
-                            value=9,
-                            left=TreeNode(
-                                key=6,
-                                value=7,
-                                left=TreeNode(
-                                    key=5,
-                                    value=6,
-                                    left=None,
-                                    right=None,
-                                    height=0,
-                                    size=1,
-                                ),
-                                right=TreeNode(
-                                    key=7,
-                                    value=8,
-                                    left=None,
-                                    right=None,
-                                    height=0,
-                                    size=1,
-                                ),
-                                height=1,
-                                size=3,
-                            ),
-                            right=TreeNode(
-                                key=9, value=10, left=None, right=None, height=0, size=1
-                            ),
-                            height=2,
-                            size=5,
-                        ),
-                        height=3,
-                        size=9,
-                    )
-                ),
-                11,
-            ),
-        ),
-        (
-            (
-                (1, 2),
-                (2, 3),
-                (3, 4),
-                (4, 5),
-                (5, 6),
-                (6, 7),
-                (7, 8),
-                (8, 9),
-                (9, 10),
-                (10, 11),
-            ),
             9,
-            (
-                TreeMap(
-                    root=TreeNode(
-                        key=4,
-                        value=5,
-                        left=TreeNode(
-                            key=2,
-                            value=3,
-                            left=TreeNode(
-                                key=1, value=2, left=None, right=None, height=0, size=1
-                            ),
-                            right=TreeNode(
-                                key=3, value=4, left=None, right=None, height=0, size=1
-                            ),
-                            height=1,
-                            size=3,
-                        ),
-                        right=TreeNode(
-                            key=8,
-                            value=9,
-                            left=TreeNode(
-                                key=6,
-                                value=7,
-                                left=TreeNode(
-                                    key=5,
-                                    value=6,
-                                    left=None,
-                                    right=None,
-                                    height=0,
-                                    size=1,
-                                ),
-                                right=TreeNode(
-                                    key=7,
-                                    value=8,
-                                    left=None,
-                                    right=None,
-                                    height=0,
-                                    size=1,
-                                ),
-                                height=1,
-                                size=3,
-                            ),
-                            right=TreeNode(
-                                key=10,
-                                value=11,
-                                left=None,
-                                right=None,
-                                height=0,
-                                size=1,
-                            ),
-                            height=2,
-                            size=5,
-                        ),
-                        height=3,
-                        size=9,
-                    )
-                ),
-                10,
-            ),
+            11,
         ),
         (
             (
@@ -485,73 +134,41 @@ def test_put(tree_elements, element, expected):
                 (9, 10),
                 (10, 11),
             ),
-            4,
+            2,
+            9,
+            3,
+        ),
+        (
             (
-                TreeMap(
-                    root=TreeNode(
-                        key=5,
-                        value=6,
-                        left=TreeNode(
-                            key=2,
-                            value=3,
-                            left=TreeNode(
-                                key=1, value=2, left=None, right=None, height=0, size=1
-                            ),
-                            right=TreeNode(
-                                key=3, value=4, left=None, right=None, height=0, size=1
-                            ),
-                            height=1,
-                            size=3,
-                        ),
-                        right=TreeNode(
-                            key=8,
-                            value=9,
-                            left=TreeNode(
-                                key=6,
-                                value=7,
-                                left=None,
-                                right=TreeNode(
-                                    key=7,
-                                    value=8,
-                                    left=None,
-                                    right=None,
-                                    height=0,
-                                    size=1,
-                                ),
-                                height=1,
-                                size=2,
-                            ),
-                            right=TreeNode(
-                                key=9,
-                                value=10,
-                                left=None,
-                                right=TreeNode(
-                                    key=10,
-                                    value=11,
-                                    left=None,
-                                    right=None,
-                                    height=0,
-                                    size=1,
-                                ),
-                                height=1,
-                                size=2,
-                            ),
-                            height=2,
-                            size=5,
-                        ),
-                        height=3,
-                        size=9,
-                    )
-                ),
-                5,
+                (1, "a"),
+                (10, "b"),
+                (13, 0),
+                (14, True),
+                (0, 0),
+                (9, 9),
+                (127, 128),
+                (37, "00:43 :)"),
             ),
+            37,
+            7,
+            "00:43 :)",
+        ),
+        (
+            ((12, [0]), (11, 6), (10, "27.12.2023"), (3, 3), (100, None), (8, 18)),
+            100,
+            5,
+            None,
         ),
     ),
 )
-def test_remove(tree_elements, key, expected):
+def test_remove(tree_elements, key, expected_size, expected_value):
     dummy_tree = create_dummy_tree(tree_elements)
     value = remove(dummy_tree, key)
-    assert dummy_tree == expected[0] and value == expected[1]
+    assert (
+        value == expected_value
+        and get_size(dummy_tree.root) == expected_size
+        and check_tree_balance(dummy_tree)
+    )
 
 
 @pytest.mark.parametrize(
@@ -686,7 +303,7 @@ def test_get_minimum_key(tree_elements, expected):
 )
 def test_get_higher_bound(tree_elements, key, expected):
     dummy_tree = create_dummy_tree(tree_elements)
-    function = get_higher_bound(dummy_tree, key)
+    function = get_upper_bound(dummy_tree, key)
     assert function == expected
 
 
@@ -748,7 +365,7 @@ def test_error_remove_in_empty_tree(key):
 def test_error_get_higher_bound(tree_elements, key):
     dummy_tree = create_dummy_tree(tree_elements)
     with pytest.raises(ValueError):
-        get_higher_bound(dummy_tree, key)
+        get_upper_bound(dummy_tree, key)
 
 
 @pytest.mark.parametrize(

@@ -12,7 +12,7 @@ class TreeNode(Generic[Value]):
     value: Value
     left: Optional["TreeNode[Value]"] = None
     right: Optional["TreeNode[Value]"] = None
-    height: int = 0
+    height: int = 1
     size: int = 1
 
 
@@ -21,53 +21,55 @@ class TreeMap(Generic[Value]):
     root: Optional["TreeNode[Value]"] = None
 
 
-def _get_height(node: TreeNode[Value]) -> int:
+def get_height(node: TreeNode[Value]) -> int:
     if node is None:
-        return -1
+        return 0
     else:
         return node.height
 
 
-def _get_size(node: TreeNode[Value]) -> int:
+def get_size(node: TreeNode[Value]) -> int:
     if node is None:
         return 0
     else:
         return node.size
 
 
-def _get_balance_factor(node: TreeNode[Value]) -> int:
+def get_balance_factor(node: TreeNode[Value]) -> int:
     if node is None:
         return 0
-    return _get_height(node.left) - _get_height(node.right)
+    return get_height(node.left) - get_height(node.right)
 
 
-def _update_height(node: TreeNode[Value]):
-    node.height = max(_get_height(node.left), _get_height(node.right)) + 1
+def _update_height(
+    node: TreeNode[Value], left: TreeNode[Value], right: TreeNode[Value]
+):
+    node.height = max(get_height(left), get_height(right)) + 1
 
 
-def _update_size(node: TreeNode[Value]):
-    node.size = _get_size(node.left) + _get_size(node.right) + 1
+def _update_size(node: TreeNode[Value], left: TreeNode[Value], right: TreeNode[Value]):
+    node.size = get_size(left) + get_size(right) + 1
 
 
 def _update_balance(node: TreeNode[Value]) -> TreeNode[Value]:
-    _update_height(node)
-    _update_size(node)
-    balance_factor = _get_balance_factor(node)
+    _update_height(node, node.left, node.right)
+    _update_size(node, node.left, node.right)
+    balance_factor = get_balance_factor(node)
 
     if balance_factor == 2:
-        if _get_balance_factor(node.left) < 0:
+        if get_balance_factor(node.left) < 0:
             return _double_left_rotate(node)
         return _single_left_rotate(node)
 
     elif balance_factor == -2:
-        if _get_balance_factor(node.right) > 0:
+        if get_balance_factor(node.right) > 0:
             return _double_right_rotate(node)
         return _single_right_rotate(node)
 
     return node
 
 
-def _is_empty(tree_map: TreeMap[Value]) -> bool:
+def is_empty(tree_map: TreeMap[Value]) -> bool:
     return tree_map.root is None
 
 
@@ -84,7 +86,7 @@ def delete_tree_map(tree_map: TreeMap[Value]):
         node.left = None
         node.right = None
 
-    if not _is_empty(tree_map):
+    if not is_empty(tree_map):
         _delete_tree_map(tree_map.root)
     tree_map.root = None
 
@@ -137,51 +139,44 @@ def remove(tree_map: TreeMap[Value], key: Key) -> Value:
 
 
 def has_key(tree_map: TreeMap[Value], key: Key) -> bool:
-    if _is_empty(tree_map):
+    if is_empty(tree_map):
         return False
-
-    def _hash_key(node: TreeNode[Value], key: Key):
-        if node is None:
-            return False
-        if node.key == key:
-            return True
-        if node.key > key:
-            return _hash_key(node.left, key)
-        return _hash_key(node.right, key)
-
-    return _hash_key(tree_map.root, key)
+    return _get_node(tree_map.root, key) is not None
 
 
 def get_value(tree_map: TreeMap[Value], key: Key) -> Value:
-    if not has_key(tree_map, key):
+    node = _get_node(tree_map.root, key)
+    if not node:
         raise ValueError("No such key!")
+    return node[1]
 
-    def _get_value(node: TreeNode[Value], key: Key):
-        if node.key == key:
-            return node.value
-        if node.key > key:
-            return_value = _get_value(node.left, key)
-        else:
-            return_value = _get_value(node.right, key)
-        return return_value
 
-    return _get_value(tree_map.root, key)
+def _get_node(node: TreeNode[Value], key: Key) -> list[Key, Value] | None:
+    if node is None:
+        return None
+    if node.key == key:
+        return [node.key, node.value]
+    if node.key > key:
+        return _get_node(node.left, key)
+    return _get_node(node.right, key)
 
 
 def get_maximum_key(tree_map: TreeMap[Value]) -> Key:
-    if _is_empty(tree_map):
+    if is_empty(tree_map):
         raise ValueError("No any keys!")
 
     def _get_maximum_key(node: TreeNode):
-        if node.right is None:
-            return node.key
-        return _get_maximum_key(node.right)
+        current_node = node
+        while current_node:
+            if not current_node.right:
+                return current_node.key
+            current_node = current_node.right
 
     return _get_maximum_key(tree_map.root)
 
 
 def get_minimum_key(tree_map: TreeMap[Value]) -> Key:
-    if _is_empty(tree_map):
+    if is_empty(tree_map):
         raise ValueError("No any keys!")
 
     def _get_minimum_key(node: TreeNode[Value]):
@@ -212,7 +207,7 @@ def get_lower_bound(tree_map: TreeMap[Value], key: Key) -> Key:
     return _get_lower_bound(tree_map.root, key, max_key)
 
 
-def get_higher_bound(tree_map: TreeMap[Value], key: Key) -> Key:
+def get_upper_bound(tree_map: TreeMap[Value], key: Key) -> Key:
     try:
         max_key = get_maximum_key(tree_map)
     except ValueError:
@@ -222,20 +217,20 @@ def get_higher_bound(tree_map: TreeMap[Value], key: Key) -> Key:
             f"{key} is bigger than any keys or equal to the max key in TreeMap"
         )
 
-    def _get_lower_bound(node: TreeNode[Value], key: Key, min_key):
+    def _get_upper_bound(node: TreeNode[Value], key: Key, min_key):
         if node.key > key:
             min_key = min(min_key, node.key)
         if key < node.key and node.left is not None:
-            return _get_lower_bound(node.left, key, min_key)
+            return _get_upper_bound(node.left, key, min_key)
         elif key > node.key and node.right is not None:
-            return _get_lower_bound(node.right, key, min_key)
+            return _get_upper_bound(node.right, key, min_key)
         return min_key
 
-    return _get_lower_bound(tree_map.root, key, max_key)
+    return _get_upper_bound(tree_map.root, key, max_key)
 
 
 def traverse(tree_map: TreeMap[Value], order: str) -> list:
-    if _is_empty(tree_map):
+    if is_empty(tree_map):
         return []
 
     result = []
@@ -282,10 +277,10 @@ def _single_right_rotate(node: TreeNode[Value]) -> TreeNode[Value]:
     new_node = node.right
     node.right = new_node.left
     new_node.left = node
-    _update_height(node)
-    _update_size(node)
-    new_node.height = max(_get_height(new_node.right), _get_height(node)) + 1
-    new_node.size = _get_size(new_node.right) + _get_size(node) + 1
+    _update_height(node, node.left, node.right)
+    _update_size(node, node.left, node.right)
+    _update_height(new_node, node, new_node.right)
+    _update_size(new_node, node, new_node.right)
     return new_node
 
 
@@ -293,10 +288,10 @@ def _single_left_rotate(node: TreeNode[Value]) -> TreeNode[Value]:
     new_node = node.left
     node.left = new_node.right
     new_node.right = node
-    _update_height(node)
-    _update_size(node)
-    new_node.height = max(_get_height(new_node.left), _get_height(node)) + 1
-    new_node.size = _get_size(new_node.left) + _get_size(node) + 1
+    _update_height(node, node.left, node.right)
+    _update_size(node, node.left, node.right)
+    _update_height(new_node, new_node.left, node)
+    _update_size(new_node, new_node.left, node)
     return new_node
 
 

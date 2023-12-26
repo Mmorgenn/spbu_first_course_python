@@ -1,9 +1,15 @@
+from os.path import exists
 from src.homework.Homework_6.avl_tree import *
 
 
-FILE_INPUT = "shop_logs.txt"
-FILE_OUTPUT_LOGS = "output_results.txt"
-FILE_OUTPUT_BALANCE = "output_balance.txt"
+def check_files(file_input: str, file_logs: str, file_balance: str) -> bool:
+    if exists(file_input) and not exists(file_logs) and not exists(file_balance):
+        return True
+    if not exists(file_input):
+        print(f"File {file_input} is not found")
+    if exists(file_logs) or exists(file_balance):
+        print(f"File for writing is already exist")
+    return False
 
 
 def add(storage: TreeMap[Value], size: int, count: int):
@@ -84,17 +90,21 @@ def file_writing_balance(balance: list, file_name_output: str):
             file_output.write(f"{size} {count}\n")
 
 
-def get_results_and_balance():
+def get_results_and_balance(file_input: str):
     storage = create_tree_map()
-    results = file_scrolling(storage, FILE_INPUT)
+    results = file_scrolling(storage, file_input)
     balance = traverse(storage, "inorder")
     return results, balance
 
 
 def main():
-    results, balance = get_results_and_balance()
-    file_writing_logs(results, FILE_OUTPUT_LOGS)
-    file_writing_balance(balance, FILE_OUTPUT_BALANCE)
+    file_input = input("Input file for reading: ")
+    file_logs = input("Input file for logs: ")
+    file_balance = input("Input file for balance: ")
+    if check_files(file_input, file_logs, file_balance):
+        results, balance = get_results_and_balance(file_input)
+        file_writing_logs(results, file_logs)
+        file_writing_balance(balance, file_balance)
 
 
 if __name__ == "__main__":
