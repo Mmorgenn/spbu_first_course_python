@@ -1,13 +1,9 @@
 from dataclasses import dataclass
-from typing import TypeVar
-
-
-Value = TypeVar("Value")
 
 
 @dataclass
 class ParserNode:
-    value: Value
+    value: str
     children: list["ParserNode"]
 
 
