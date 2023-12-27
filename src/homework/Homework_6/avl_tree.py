@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from typing import Generic, Optional, TypeVar
-
+from copy import deepcopy
 
 Value = TypeVar("Value")
 Key = TypeVar("Key")
@@ -303,3 +303,91 @@ def _double_right_rotate(node: TreeNode[Value]) -> TreeNode[Value]:
 def _double_left_rotate(node: TreeNode[Value]) -> TreeNode[Value]:
     node.left = _single_right_rotate(node.left)
     return _single_left_rotate(node)
+
+
+# for Homework_6_2
+
+
+def split(tree_map: TreeMap[Value], key: Key) -> tuple[TreeMap[Value], TreeMap[Value]]:
+    tree_map = deepcopy(tree_map)
+    if _is_empty(tree_map):
+        another_map = create_tree_map()
+        return tree_map, another_map
+
+    def _split(node, small_root, big_root):
+        if not node:
+            return None, None
+        if node.key == key:
+            new_node = merge_node(TreeNode(node.key, node.value), node.right)
+            return node.left, new_node
+        if node.key < key:
+            small_root, big_root = _split(node.right, small_root, big_root)
+            new_node = merge_node(node.left, TreeNode(node.key, node.value))
+            return merge_node(new_node, small_root), big_root
+        if node.key > key:
+            small_root, big_root = _split(node.left, small_root, big_root)
+            new_node = merge_node(TreeNode(node.key, node.value), node.right)
+            return small_root, merge_node(big_root, new_node)
+
+    small_tree = create_tree_map()
+    big_tree = create_tree_map()
+    small_tree.root, big_tree.root = _split(tree_map.root, None, None)
+    return small_tree, big_tree
+
+
+def merge_node(node: TreeNode[Value], another_node: TreeNode[Value]) -> TreeNode[Value]:
+    if not node or not another_node:
+        return node if node else another_node
+    if _get_height(node) <= _get_height(another_node):
+        another_node.left = merge_node(node, another_node.left)
+        return _update_balance(another_node)
+    else:
+        node.right = merge_node(node.right, another_node)
+        return _update_balance(node)
+
+
+def join(tree_map: TreeMap[Value], another: TreeMap[Value]) -> TreeMap[Value]:
+    if _is_empty(tree_map):
+        return another
+    if _is_empty(another):
+        return tree_map
+
+    def _join_equal_keys_size(small_tree: TreeMap[Value], big_tree: TreeMap[Value]):
+        for key, value in traverse(small_tree, "preorder"):
+            put(big_tree, key, value)
+        return big_tree
+
+    if get_maximum_key(another) < get_minimum_key(tree_map):
+        new_tree = create_tree_map()
+        new_tree.root = merge_node(another.root, tree_map.root)
+        return new_tree
+    if get_maximum_key(tree_map) < get_minimum_key(another):
+        new_tree = create_tree_map()
+        new_tree.root = merge_node(tree_map.root, another.root)
+        return new_tree
+    if _get_size(tree_map.root) <= _get_size(another.root):
+        return _join_equal_keys_size(tree_map, another)
+    if _get_size(tree_map.root) > _get_size(another.root):
+        return _join_equal_keys_size(another, tree_map)
+
+
+def get_all(tree_map: TreeMap[Value], left: Key, right: Key) -> list[(Key, Value)]:
+    if left > right:
+        raise ValueError("Must be left_key <= right_key!")
+    big_tree = split(tree_map, left)[1]
+    tree_key_range = split(big_tree, right)[0]
+    return traverse(tree_key_range, "inorder")
+
+
+def get_all_keys(tree_map: TreeMap[Value], left: Key, right: Key) -> list[Key]:
+    if left > right:
+        raise ValueError("Must be left_key <= right_key!")
+    return list(map(lambda pair: pair[0], get_all(tree_map, left, right)))
+
+
+def remove_keys(tree_map: TreeMap[Value], left: Key, right: Key):
+    if left > right:
+        raise ValueError("Must be left_key <= right_key!")
+    small_tree, big_tree = split(tree_map, left)
+    big_tree = split(tree_map, right)[1]
+    tree_map.root = join(small_tree, big_tree).root
